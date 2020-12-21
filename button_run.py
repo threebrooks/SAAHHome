@@ -25,12 +25,12 @@ async def Biglight(onoff):
     biglight.set_light(4, 'on', False)
  
 onoff = True
-button_pin = 17
+button_pin = 9
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(button_pin, GPIO.IN)
 while(True):
   button = GPIO.input(button_pin)
-  if (button == 0):
+  if (button == 1):
     onoff = not onoff
     asyncio.run(Ikealicht(onoff))
     asyncio.run(Biglight(onoff))
