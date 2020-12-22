@@ -27,7 +27,7 @@ async def Biglight(onoff):
 onoff = True
 button_pin = 9
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(button_pin, GPIO.IN)
+GPIO.setup(button_pin, GPIO.IN, GPIO.PUD_DOWN)
 while(True):
   button = GPIO.input(button_pin)
   if (button == 1):
