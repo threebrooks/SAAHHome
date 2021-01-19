@@ -4,6 +4,7 @@ import numpy as np
 from kasa import SmartPlug
 from phue import Bridge
 import time
+import datetime
 import RPi.GPIO as GPIO
 
 ikealicht = SmartPlug("192.168.86.155")
@@ -17,10 +18,10 @@ async def Ikealicht(onoff):
   else:
     await ikealicht.turn_off()
 
-async def Biglight(onoff):
+async def Biglight(onoff, brightness):
   if (onoff):
     biglight.set_light(4, 'on', True)
-    biglight.set_light(4, 'bri', 254)
+    biglight.set_light(4, 'bri', brightness)
   else:
     biglight.set_light(4, 'on', False)
  
@@ -32,7 +33,12 @@ while(True):
   button = GPIO.input(button_pin)
   if (button == 1):
     onoff = not onoff
-    asyncio.run(Ikealicht(onoff))
-    asyncio.run(Biglight(onoff))
+    now = datetime.datetime.now()
+    if (now.hour > 21 or now.hour < 9):
+      asyncio.run(Ikealicht(False))
+      asyncio.run(Biglight(onoff, 16))
+    else:
+      asyncio.run(Ikealicht(onoff))
+      asyncio.run(Biglight(onoff, 254))
     print("Onoff: "+str(onoff))
     time.sleep(1)
