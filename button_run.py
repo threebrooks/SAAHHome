@@ -54,7 +54,7 @@ while(True):
   if (button == 1):
     onoff = not onoff
     now = datetime.datetime.now()
-    if (now.hour > 21 or now.hour < 9):
+    if (now.hour >= 21 or now.hour < 9):
       asyncio.run(Ikealicht(False))
       asyncio.run(Biglight(onoff, 16, 'AB2424'))
     else:
