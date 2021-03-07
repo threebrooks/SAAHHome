@@ -29,6 +29,8 @@ def convertColor(hexCode):
 ikealicht = SmartPlug("192.168.86.155")
 biglight = Bridge('192.168.86.26')
 biglight.connect()
+for l in biglight.lights:
+  print(l.name)
 
 async def Ikealicht(onoff):
   await ikealicht.update()
@@ -38,12 +40,13 @@ async def Ikealicht(onoff):
     await ikealicht.turn_off()
 
 async def Biglight(onoff, brightness, color):
-  if (onoff):
-    biglight.set_light(4, 'on', True)
-    biglight.set_light(4, 'bri', brightness)
-    biglight.set_light(4, 'xy', convertColor(color))
+  light_name = 'Deckenlicht'
+  if (onoff): 
+    biglight.set_light(light_name, 'on', True)
+    biglight.set_light(light_name, 'bri', brightness)
+    biglight.set_light(light_name, 'xy', convertColor(color))
   else:
-    biglight.set_light(4, 'on', False)
+    biglight.set_light(light_name, 'on', False)
  
 onoff = True
 button_pin = 9
