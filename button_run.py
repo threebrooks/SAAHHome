@@ -76,4 +76,5 @@ while(True):
   time.sleep(0.1)
   if ((time.time()-last_update) > 5*60):
     update_lights(lights_onoff)
+    last_update = time.time()
   prev_button = button
