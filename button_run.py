@@ -67,30 +67,32 @@ GPIO.setup(button_pin, GPIO.IN, GPIO.PUD_DOWN)
 last_update = time.time()
 
 wemo_switch = wemo.wemo('192.168.86.243')
-humidifier = int(wemo_switch.status())
 
 while(True):
-  button = GPIO.input(button_pin)
-  if (button == 1 and prev_button == 0): # Down
-    btn_down_time = time.time()
-  elif (button == 0 and prev_button == 1): # Up
-    if (time.time()-btn_down_time < 2.0):    
-      lights_onoff = not lights_onoff
+  try:
+    button = GPIO.input(button_pin)
+    if (button == 1 and prev_button == 0): # Down
+      btn_down_time = time.time()
+    elif (button == 0 and prev_button == 1): # Up
+      if (time.time()-btn_down_time < 2.0):    
+        lights_onoff = not lights_onoff
+        update_lights(lights_onoff)
+    if ((time.time()-last_update) > 5*60):
       update_lights(lights_onoff)
+      humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, 23)
+      wemo_state = int(wemo_switch.status())
+      print("Humidity "+str(humidity))
+      if humidity is not None:
+        if (wemo_state == 0 and humidity < 40.0):
+          print("Humidifier on")
+          wemo_switch.on()
+        elif (wemo_state == 1 and humidity > 60.0):
+          print("Humidifier off")
+          wemo_switch.off()
+      last_update = time.time()
+    prev_button = button
+  except:
+    pass
   time.sleep(0.1)
-  if ((time.time()-last_update) > 5*60):
-    update_lights(lights_onoff)
-    humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, 23)
-    if humidity is not None:
-      if (humidifier == 0 and humidity < 40.0):
-        humidifier = 1
-      elif (humidifier == 1 and humidity > 60.0):
-        humidifier = 0
-    if (humidifier == 0):
-      wemo_switch.off()
-    else:
-      wemo_switch.on()
-    last_update = time.time()
-  prev_button = button
 
      
