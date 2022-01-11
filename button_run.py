@@ -68,6 +68,8 @@ last_update = time.time()
 
 wemo_switch = wemo.wemo('192.168.86.243')
 
+logger = open('/tmp/saah.log','a')
+
 while(True):
   try:
     button = GPIO.input(button_pin)
@@ -83,16 +85,25 @@ while(True):
       wemo_state = int(wemo_switch.status())
       print("Humidity "+str(humidity))
       if humidity is not None:
-        if (wemo_state == 0 and humidity < 40.0):
+        now = datetime.datetime.now()
+        if (now.hour >= 5 and now.hour <= 20):
+          wemo_switch.off()
+        elif (wemo_state == 0 and humidity < 40.0):
           print("Humidifier on")
           wemo_switch.on()
         elif (wemo_state == 1 and humidity > 60.0):
           print("Humidifier off")
           wemo_switch.off()
+        logger.write(str(time.time())+" "+str(humidity)+" "+str(wemo_switch.status())+"\n")
+        logger.flush()
       last_update = time.time()
     prev_button = button
-  except:
-    pass
+  except Exception as e:
+    try:
+      logger.write(str(e))
+      logger.flush()
+    except:
+      pass
   time.sleep(0.1)
 
      
