@@ -86,7 +86,7 @@ while(True):
       print("Humidity "+str(humidity))
       if humidity is not None:
         now = datetime.datetime.now()
-        if (now.hour >= 5 and now.hour <= 20):
+        if (now.hour >= 5 and now.hour < 20):
           wemo_switch.off()
         elif (wemo_state == 0 and humidity < 40.0):
           print("Humidifier on")
@@ -94,7 +94,7 @@ while(True):
         elif (wemo_state == 1 and humidity > 60.0):
           print("Humidifier off")
           wemo_switch.off()
-        logger.write(str(time.time())+" "+str(humidity)+" "+str(wemo_switch.status())+"\n")
+        logger.write(datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+" "+str(humidity)+" "+str(wemo_switch.status())+"\n")
         logger.flush()
       last_update = time.time()
     prev_button = button
