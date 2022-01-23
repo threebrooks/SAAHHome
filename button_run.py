@@ -10,6 +10,13 @@ import RPi.GPIO as GPIO
 import Adafruit_DHT
 import wemo
 
+def am_i_at_home():
+  res = os.system("ping -c 1 pixel-5a.lan")
+  if (res == 0):
+    return True
+  else:
+    return False
+
 def convertColor(hexCode):
     R = int(hexCode[:2],16)
     G = int(hexCode[2:4],16)
@@ -81,12 +88,14 @@ while(True):
         update_lights(lights_onoff)
     if ((time.time()-last_update) > 5*60):
       update_lights(lights_onoff)
+      at_home = am_i_at_home()
+      print("At home? "+str(at_home))
       humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, 23)
       wemo_state = int(wemo_switch.status())
       print("Humidity "+str(humidity))
       if humidity is not None:
         now = datetime.datetime.now()
-        if (False and (now.hour >= 5 and now.hour < 20)):
+        if (not at_home):
           wemo_switch.off()
         elif (wemo_state == 0 and humidity < 40.0):
           print("Humidifier on")
