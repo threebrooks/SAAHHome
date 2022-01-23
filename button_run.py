@@ -68,7 +68,7 @@ last_update = time.time()
 
 wemo_switch = wemo.wemo('192.168.86.243')
 
-logger = open('/tmp/saah.log','a')
+records = []
 
 while(True):
   try:
@@ -94,16 +94,16 @@ while(True):
         elif (wemo_state == 1 and humidity > 60.0):
           print("Humidifier off")
           wemo_switch.off()
-        logger.write(datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+" "+str(humidity)+" "+str(wemo_switch.status())+"\n")
-        logger.flush()
+      records.append([(datetime.datetime.now()),humidity, wemo_state])
+      records = records[-50:]
+      with open("/tmp/saah.log","w") as fp:
+        for record in records:
+          fp.write("\""+str(record[0])+"\" "+str(record[1])+" "+str(record[2])+"\n")
+      os.system("gnuplot gnuplot.script")
       last_update = time.time()
     prev_button = button
   except Exception as e:
-    try:
-      logger.write(str(e))
-      logger.flush()
-    except:
-      pass
+    print(str(e))
   time.sleep(0.1)
 
      
