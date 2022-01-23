@@ -86,7 +86,7 @@ while(True):
       print("Humidity "+str(humidity))
       if humidity is not None:
         now = datetime.datetime.now()
-        if (now.hour >= 5 and now.hour < 20):
+        if (False and (now.hour >= 5 and now.hour < 20)):
           wemo_switch.off()
         elif (wemo_state == 0 and humidity < 40.0):
           print("Humidifier on")
@@ -94,11 +94,11 @@ while(True):
         elif (wemo_state == 1 and humidity > 60.0):
           print("Humidifier off")
           wemo_switch.off()
-      records.append([(datetime.datetime.now()),humidity, wemo_state])
+      records.append([(datetime.datetime.now()),humidity, 100*int(wemo_state), temperature])
       records = records[-50:]
       with open("/tmp/saah.log","w") as fp:
         for record in records:
-          fp.write("\""+str(record[0])+"\" "+str(record[1])+" "+str(record[2])+"\n")
+          fp.write("\""+str(record[0])+"\" "+str(record[1])+" "+str(record[2])+" "+str(record[3])+"\n")
       os.system("gnuplot gnuplot.script")
       last_update = time.time()
     prev_button = button
