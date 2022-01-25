@@ -76,6 +76,7 @@ last_update = time.time()
 wemo_switch = wemo.wemo('192.168.86.243')
 
 records = []
+update_lights(lights_onoff)
 
 while(True):
   try:
@@ -109,6 +110,9 @@ while(True):
         for record in records:
           fp.write("\""+str(record[0])+"\" "+str(record[1])+" "+str(record[2])+" "+str(record[3])+"\n")
       os.system("gnuplot gnuplot.script")
+      if (not at_home):
+        lights_onoff = False
+      update_lights(lights_onoff)
       last_update = time.time()
     prev_button = button
   except Exception as e:
