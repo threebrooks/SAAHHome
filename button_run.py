@@ -96,12 +96,12 @@ while(True):
       print("Humidity "+str(humidity))
       if humidity is not None:
         now = datetime.datetime.now()
-        if (not at_home):
+        if (not at_home or (now.hour >= 10 and now.hour < 18)):
           wemo_switch.off()
-        elif (wemo_state == 0 and humidity < 40.0):
+        elif (wemo_state == 0 and humidity < 50.0):
           print("Humidifier on")
           wemo_switch.on()
-        elif (wemo_state == 1 and humidity > 60.0):
+        elif (wemo_state == 1 and humidity > 70.0):
           print("Humidifier off")
           wemo_switch.off()
       records.append([(datetime.datetime.now()),humidity, 100*int(wemo_state), temperature])
