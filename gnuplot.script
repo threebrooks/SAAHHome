@@ -3,6 +3,6 @@ set term png
 set timefmt '"%Y-%m-%d %H:%M:%S"'
 set format x "%H:%M"
 #set y2tics
-set yrange [30:80]
+set yrange [20:80]
 set output "/var/www/html/humidity.png"
 plot "/tmp/saah.log" u 1:2 w l title "humidity"
