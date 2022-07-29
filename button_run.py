@@ -11,7 +11,7 @@ import Adafruit_DHT
 import wemo
 
 def am_i_at_home():
-  res = os.system("ping -c 1 pixel-5a.lan")
+  res = os.system("ping -c 1 pixel-6a.lan")
   if (res == 0):
     return True
   else:
@@ -58,7 +58,7 @@ async def Biglight(onoff, brightness, color):
 
 def update_lights(onoff):
   now = datetime.datetime.now()
-  if (now.hour >= 21 or now.hour < 7):
+  if (now.hour >= 23 or now.hour < 7):
     asyncio.run(Ikealicht(False))
     asyncio.run(Biglight(onoff, 16, 'AB2424'))
   else:
@@ -92,18 +92,22 @@ while(True):
       at_home = am_i_at_home()
       print("At home? "+str(at_home))
       humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, 23)
-      wemo_state = int(wemo_switch.status())
+      wemo_state = 0
       print("Humidity "+str(humidity))
-      if humidity is not None:
-        now = datetime.datetime.now()
-        if (not at_home or (now.hour >= 10 and now.hour < 18)):
-          wemo_switch.off()
-        elif (wemo_state == 0 and humidity < 50.0):
-          print("Humidifier on")
-          wemo_switch.on()
-        elif (wemo_state == 1 and humidity > 70.0):
-          print("Humidifier off")
-          wemo_switch.off()
+      try:
+        wemo_state = int(wemo_switch.status())
+        if humidity is not None:
+          now = datetime.datetime.now()
+          if (not at_home or (now.hour >= 10 and now.hour < 18)):
+            wemo_switch.off()
+          elif (wemo_state == 0 and humidity < 50.0):
+            print("Humidifier on")
+            wemo_switch.on()
+          elif (wemo_state == 1 and humidity > 70.0):
+            print("Humidifier off")
+            wemo_switch.off()
+      except:
+        pass
       records.append([(datetime.datetime.now()),humidity, 100*int(wemo_state), temperature])
       records = records[-50:]
       with open("/tmp/saah.log","w") as fp:
