@@ -6,3 +6,7 @@ set format x "%H:%M"
 set yrange [20:80]
 set output "/var/www/html/humidity.png"
 plot "/tmp/saah.log" u 1:2 w l title "humidity"
+set yrange [-10:40]
+set output "/var/www/html/temperature.png"
+plot "/tmp/saah.log" u 1:4 w l title "temperature"
+

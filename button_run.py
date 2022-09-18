@@ -12,6 +12,7 @@ import wemo
 
 def am_i_at_home():
   res = os.system("ping -c 1 pixel-6a.lan")
+  print(res)
   if (res == 0):
     return True
   else:
@@ -36,16 +37,19 @@ def convertColor(hexCode):
 
     return [firstPos, secondPos]
 
-ikealicht = SmartPlug("192.168.86.155")
+ikealicht = SmartPlug("hs105")
 biglight = Bridge('192.168.86.26')
 biglight.connect()
 
 async def Ikealicht(onoff):
-  await ikealicht.update()
-  if (onoff):
-    await ikealicht.turn_on()
-  else:
-    await ikealicht.turn_off()
+  try:
+    await ikealicht.update()
+    if (onoff):
+      await ikealicht.turn_on()
+    else:
+      await ikealicht.turn_off()
+  except:
+    pass
 
 async def Biglight(onoff, brightness, color):
   light_name = 'Deckenlicht'
@@ -71,7 +75,7 @@ button_pin = 22
 prev_button = 0
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(button_pin, GPIO.IN, GPIO.PUD_DOWN)
-last_update = time.time()
+last_update = 0 #time.time()
 
 wemo_switch = wemo.wemo('192.168.86.243')
 
