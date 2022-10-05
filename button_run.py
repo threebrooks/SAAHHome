@@ -2,13 +2,21 @@ import asyncio
 import sys
 import os
 import numpy as np
-from kasa import SmartPlug
+from kasa import SmartPlug,Discover
 from phue import Bridge
 import time
 import datetime
 import RPi.GPIO as GPIO
 import Adafruit_DHT
 import wemo
+
+def GetKasaAddress(name):
+  devices = asyncio.run(Discover.discover())
+  for addr, dev in devices.items():
+      if (dev.alias == name):
+        return addr
+      asyncio.run(dev.update())
+  raise RuntimeError("Can't find "+name)
 
 def am_i_at_home():
   res = os.system("ping -c 1 pixel-6a.lan")
@@ -37,7 +45,7 @@ def convertColor(hexCode):
 
     return [firstPos, secondPos]
 
-ikealicht = SmartPlug("hs105")
+ikealicht = SmartPlug(GetKasaAddress("Ikealicht"))
 biglight = Bridge('192.168.86.26')
 biglight.connect()
 
