@@ -8,11 +8,11 @@ import time
 import datetime
 import RPi.GPIO as GPIO
 import Adafruit_DHT
-import wemo
 
 def GetKasaAddress(name):
   devices = asyncio.run(Discover.discover())
   for addr, dev in devices.items():
+      print(dev.alias)
       if (dev.alias == name):
         return addr
       asyncio.run(dev.update())
@@ -46,16 +46,18 @@ def convertColor(hexCode):
     return [firstPos, secondPos]
 
 ikealicht = SmartPlug(GetKasaAddress("Ikealicht"))
+#humidor = SmartPlug(GetKasaAddress("Humidor"))
+#print(humidor.state)
 biglight = Bridge('192.168.86.26')
 biglight.connect()
 
-async def Ikealicht(onoff):
+async def SwitchKasa(device, onoff):
   try:
-    await ikealicht.update()
+    await device.update()
     if (onoff):
-      await ikealicht.turn_on()
+      await device.turn_on()
     else:
-      await ikealicht.turn_off()
+      await device.turn_off()
   except:
     pass
 
@@ -71,10 +73,10 @@ async def Biglight(onoff, brightness, color):
 def update_lights(onoff):
   now = datetime.datetime.now()
   if (now.hour >= 23 or now.hour < 7):
-    asyncio.run(Ikealicht(False))
+    asyncio.run(SwitchKasa(ikealicht,False))
     asyncio.run(Biglight(onoff, 16, 'AB2424'))
   else:
-    asyncio.run(Ikealicht(onoff))
+    asyncio.run(SwitchKasa(ikealicht,onoff))
     asyncio.run(Biglight(onoff, 254, 'FFFFFF'))
   print("Onoff: "+str(onoff))
  
@@ -84,8 +86,6 @@ prev_button = 0
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(button_pin, GPIO.IN, GPIO.PUD_DOWN)
 last_update = 0 #time.time()
-
-wemo_switch = wemo.wemo('192.168.86.243')
 
 records = []
 update_lights(lights_onoff)

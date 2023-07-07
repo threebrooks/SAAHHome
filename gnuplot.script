@@ -3,10 +3,10 @@ set term png
 set timefmt '"%Y-%m-%d %H:%M:%S"'
 set format x "%H:%M"
 #set y2tics
-set yrange [20:80]
+set yrange [-5:105]
 set output "/var/www/html/humidity.png"
 plot "/tmp/saah.log" u 1:2 w l title "humidity"
-set yrange [-10:40]
+set yrange [10:35]
 set output "/var/www/html/temperature.png"
 plot "/tmp/saah.log" u 1:4 w l title "temperature"
 
