@@ -1,8 +1,9 @@
 set xdata time
 set term png
 set timefmt '"%Y-%m-%d %H:%M:%S"'
-set format x "%H:%M"
+set format x "%H"
 set grid ytics xtics
+set xtics 3000
 show grid 
 set size ratio 1
 set output "/var/www/html/saah.png"
